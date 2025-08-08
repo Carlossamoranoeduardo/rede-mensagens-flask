@@ -1,0 +1,81 @@
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Rede de Mensagens</title>
+</head>
+<body>
+    <h2>Cadastro</h2>
+    <input id="cad_user" placeholder="Usuário"><br>
+    <input id="cad_pass" type="password" placeholder="Senha"><br>
+    <button onclick="cadastrar()">Cadastrar</button>
+
+    <h2>Login</h2>
+    <input id="login_user" placeholder="Usuário"><br>
+    <input id="login_pass" type="password" placeholder="Senha"><br>
+    <button onclick="logar()">Login</button>
+
+    <h2>Enviar Mensagem</h2>
+    <input id="destino" placeholder="Para"><br>
+    <input id="mensagem" placeholder="Mensagem"><br>
+    <button onclick="enviar()">Enviar</button>
+
+    <h2>Mensagens</h2>
+    <input id="usuario_mensagens" placeholder="Usuário"><br>
+    <button onclick="carregarMensagens()">Carregar</button>
+    <ul id="mensagens"></ul>
+
+<script>
+const url = "http://localhost:5000";
+
+function cadastrar() {
+    fetch(url + "/cadastro", {
+        method: "POST",
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            username: document.getElementById("cad_user").value,
+            password: document.getElementById("cad_pass").value
+        })
+    }).then(r => r.json()).then(console.log);
+}
+
+function logar() {
+    fetch(url + "/login", {
+        method: "POST",
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            username: document.getElementById("login_user").value,
+            password: document.getElementById("login_pass").value
+        })
+    }).then(r => r.json()).then(console.log);
+}
+
+function enviar() {
+    fetch(url + "/enviar", {
+        method: "POST",
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            remetente: document.getElementById("login_user").value,
+            destinatario: document.getElementById("destino").value,
+            conteudo: document.getElementById("mensagem").value
+        })
+    }).then(r => r.json()).then(console.log);
+}
+
+function carregarMensagens() {
+    fetch(url + "/mensagens/" + document.getElementById("usuario_mensagens").value)
+        .then(r => r.json())
+        .then(data => {
+            const ul = document.getElementById("mensagens");
+            ul.innerHTML = "";
+            data.forEach(msg => {
+                const li = document.createElement("li");
+                li.textContent = msg[0] + ": " + msg[1];
+                ul.appendChild(li);
+            });
+        });
+}
+</script>
+</body>
+</html>
